@@ -158,8 +158,8 @@ namespace TcpServer
                                 Console.WriteLine("#connectionSuccesful_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                                 writer.WriteLine("#connectionSuccesful_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                                 writer.Flush();
-                                Console.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
-                                writer.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
+                            //    Console.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
+                            //    writer.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                             }
                             else
                             {
