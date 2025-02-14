@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,9 +17,7 @@ namespace ChatLibrary
         private bool connected = false;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         public User bezero;
-
-        // Evento para actualizar la lista de usuarios en la UI
-        public event Action<List<User>> OnUserListUpdated;
+        public List<Msg> msgLista= new List<Msg>();
 
         public TCPClient(string bezIzena)
         {
@@ -51,6 +50,7 @@ namespace ChatLibrary
                 {
                     connected = true;
                     this.bezero.UserColor = new UserColor(int.Parse(dataArray[1]), int.Parse(dataArray[2]), int.Parse(dataArray[3]), int.Parse(dataArray[4]));
+                    //getMessages();
                     return true;
                 }
             }
@@ -84,16 +84,51 @@ namespace ChatLibrary
                 }
             }
         }
+        //public void getMessages()
+        //{
+        //    try
+        //    {
+        //        this.sw.WriteLine("#getMessages");
+        //        this.sw.Flush();
+        //        string answer=this.sr.ReadLine();
+        //        string[] mezuArray=answer.Split('_');
+        //        if (answer.StartsWith("#setMessages_"))
+        //        {
+        //            setMezuak(mezuArray);
+        //        }
 
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("Errorea mezuak hartzen: " + e);
+        //    }
+        //}
+
+        public void setMezuak(string[] data)
+        {
+
+        }
+
+        public bool SendMsg(string mezu, Object controller)
+        {
+            try
+            {
+                this.sw.WriteLine("#newMessage_" + mezu + "_#userName_" + this.bezero.Izena);
+                this.sw.Flush();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Errorea mezua bidaltzen: " + e);
+                return false;
+            }
+        }
         private void ProcesarMensaje(string mensaje)
         {
-            if (mensaje.StartsWith("#updateUserList_"))
+            String[] dataArray = mensaje.Split('_');
+            if (dataArray[0]=="#newMessage")
             {
-                ActualizarListaUsuarios(mensaje);
-            }
-            else if (mensaje.StartsWith("#message_"))
-            {
-                Console.WriteLine("Nuevo mensaje: " + mensaje);
+                updateMezu(dataArray);
             }
             else if (mensaje == "#operationSuccesful")
             {
@@ -105,18 +140,12 @@ namespace ChatLibrary
             }
         }
 
-        private void ActualizarListaUsuarios(string mensaje)
+        public void updateMezu(string[] data)
         {
-            List<User> usuarios = new List<User>();
-            string[] partes = mensaje.Split('_');
-            if (partes.Length > 1)
-            {
-                for (int i = 1; i < partes.Length; i++)
-                {
-                    usuarios.Add(new User(partes[i]));
-                }
-            }
-            OnUserListUpdated?.Invoke(usuarios);
+            UserColor kolore = new UserColor(int.Parse(data[3]), int.Parse(data[4]), int.Parse(data[5]));
+            User sender = new User(data[2], kolore);
+            Msg newMezu = new Msg(sender,data[1], data[6]);
+            
         }
 
         public bool Disconnect()
@@ -139,7 +168,7 @@ namespace ChatLibrary
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error al desconectar: {0}", e.Message);
+                    Console.WriteLine("Errorea deskonektatzen: {0}", e.Message);
                 }
                 finally
                 {
@@ -164,11 +193,11 @@ namespace ChatLibrary
                 sw?.Close();
                 str?.Close();
                 client?.Close();
-                Console.WriteLine("Conexión cerrada.");
+                Console.WriteLine("Konexioa ixten...");
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error cerrando conexión: {0}", e.Message);
+                Console.WriteLine("Errorea konexioa ixten: {0}", e.Message);
             }
         }
     }

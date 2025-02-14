@@ -46,5 +46,12 @@ namespace ChatLibrary
             this.g = g;
             this.b = b;
         }
+
+        public UserColor(int r, int g, int b)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
     }
 }

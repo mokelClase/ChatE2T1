@@ -16,6 +16,7 @@ namespace TcpServer
     public class MyTcpMultipleListener
     {
         private List<User> userLista = new List<User>();
+        private List<Msg> msgLista = new List<Msg>();
         private List<UserColor> colorList = [
             new UserColor(1, 255, 0, 0),     // Rojo brillante  
             new UserColor(2, 255, 140, 0),   // Naranja intenso
@@ -52,35 +53,35 @@ namespace TcpServer
         {
             try
             {
-                // Intentamos iniciar el servidor.
+                // Zerbitzaria hasten saiatzen dugu
                 this.server.Start();
-                Console.WriteLine("Esperando conexiones...");
+                Console.WriteLine("Konexioak itxaroten...");
 
                 // Bucle infinito para aceptar conexiones.
                 int bezeroZenbakia = 0;
                 while (true)
                 {
-                    // Espera una solicitud de conexión.
+                    // Konexio eskaera itxaroten
                     TcpClient socketcliente = this.server.AcceptTcpClient();
-                    Console.WriteLine("Un cliente está intentando conectarse.");
+                    Console.WriteLine("Bezero bat konektatzen saiatzen ari da.");
 
-                    // Gestionamos la solicitud del cliente en un hilo independiente.
+                    // Eskaera ataz ezberdinan kudeatzen dugu
                     Task.Run(() => this.BezeraKudeatu(socketcliente, bezeroZenbakia));
                 }
             }
             catch (SocketException se)
             {
-                // Si el puerto está en uso, manejamos el error y cerramos la aplicación.
-                Console.WriteLine("El puerto ya está en uso. El servidor no pudo iniciarse.");
+                // Port-a erabiltzen ari bada aplikazioa ixten dugu
+                Console.WriteLine("Port-a erabiltzen ari da. Server-a ezin da hasi.");
                 Console.WriteLine("Error: " + se.Message);
 
-                // Terminar inmediatamente el proceso
+                // Prozedura ahalik eta azkarrago amaitzen dugu
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             catch (Exception e)
             {
-                // Cualquier otro error que no sea del socket
-                Console.WriteLine("Error al iniciar el servidor: {0}", e.Message);
+                // Socket ez diren erroreak kudeatzeko
+                Console.WriteLine("Zerbitzari hastean errorea: {0}", e.Message);
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
         }
@@ -108,14 +109,14 @@ namespace TcpServer
                 {
                     string userName = "";
                     data += reader.ReadLine();
-                    Console.WriteLine("Datos recibidos: " + data);
+                    Console.WriteLine("Jasotako datuak: " + data);
                     String[] dataArray = data.Split('_');
                     String codigoOperacion = dataArray[0];
                     // Nueva conexión
                     switch (codigoOperacion)
                     {
                         case "#newConnection":
-                            Console.WriteLine("New Connection detectado");
+                            Console.WriteLine("New Connection aurkitu da");
                             userName = string.Join("_", dataArray.Skip(1));
                             if (userLista.Count > 0)
                             {
@@ -129,45 +130,69 @@ namespace TcpServer
                             {
                                 bezeroZenbakia++;
                                 int c = 0;
-                                bool colorFound = false;
-                                while (c < colorList.Count && colorFound)
+                                bool colorLibre = false;
+                                if (userLista.Count() >= 1)
                                 {
-                                    int b = 0;
-                                    while (b < userLista.Count && !colorFound)
+                                    while (c < colorList.Count && !colorLibre)
                                     {
-                                        colorFound = (userLista[b].UserColor.Id == colorList[c].Id);
-                                        b++;
+                                        int b = 0;
+
+                                        while (b < userLista.Count() && (userLista[b].UserColor.Id != colorList[c].Id))
+                                        {
+                                            b++;
+                                        }
+                                        if (b == userLista.Count())
+                                        {
+                                            colorLibre = true;
+                                        }
+                                        else
+                                        {
+                                            c++;
+                                        }
                                     }
-                                    c++;
                                 }
-                                Console.WriteLine("Color asignado: " + colorList[c].R + " " + colorList[c].G + " " + colorList[c].B);
+                                Console.WriteLine("Hautatutako kolorea: " + colorList[c].R + " " + colorList[c].G + " " + colorList[c].B);
                                 User newUser = new User(userName, colorList[c]);
                                 userLista.Add(newUser);
-                                Console.WriteLine("El usuario " + userName + " ha sido añadido a la lista de usuarios");
+                                Console.WriteLine("Erabiltzaile " + userName + " usuario listan sartu da");
                                 Console.WriteLine("#connectionSuccesful_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
-
                                 writer.WriteLine("#connectionSuccesful_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                                 writer.Flush();
+                                Console.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
+                                writer.WriteLine("#updateUserList_" + newUser.Izena + "_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                             }
                             else
                             {
-                                Console.WriteLine("ERROR: El usuario " + userName + " no ha podido ser añadido a la lista de usuarios");
+                                Console.WriteLine("ERROR: Erabiltzaile " + userName + " ezin da erabiltzaile listan sartu");
                                 writer.WriteLine("#connectionFailed");
                                 writer.Flush();
                             }
                             break;
                         case "#newMessage":
-                            Console.WriteLine("New message detectado");
+                            Console.WriteLine("New message aurkitu da");
+                            string mezuText = dataArray[1];
+                            string senderName = string.Join("_", dataArray.Skip(3));
+                            User sender = new User(senderName);
+                            foreach (var user in userLista)
+                            {
+                                if (user.Izena == senderName)
+                                {
+                                    sender = user;
+                                }
+                            }
+                            Msg mezu = new Msg(sender, mezuText, DateTime.Now);
+                            msgLista.Add(mezu);
+                            Console.WriteLine("#newMessage_" + mezu.ToString());
+                            writer.WriteLine("#newMessage_" + mezu.ToString());
+                            writer.Flush();
                             break;
                         case "#disConnection":
-                            Console.WriteLine("Disconnection detectado");
+                            Console.WriteLine("Disconnection aurkitu da");
                             userName = string.Join("_", dataArray.Skip(1));
                             bool found = false;
 
                             for (int i = 0; i < userLista.Count; i++)
                             {
-                                Console.WriteLine("index: " + i + " Count: " + userLista.Count);
-                                Console.WriteLine("izen actual: " + userLista[i].Izena + " izen buscado: " + userName);
                                 if (userLista[i].Izena == userName)
                                 {
                                     userLista.RemoveAt(i);
@@ -177,9 +202,7 @@ namespace TcpServer
 
                             if (found)
                             {
-                                writer.WriteLine("#operationSuccesful");
-                                writer.Flush();
-                                Console.WriteLine($"{userName} se ha desconectado.");
+                                Console.WriteLine($"{userName} deskonektatu da.");
                                 writer.Close();
                                 reader.Close();
                                 socket.Close();
@@ -192,7 +215,7 @@ namespace TcpServer
                             }
                             break;
                         default:
-                            Console.WriteLine("ERROR: No se reconoce el código de la operación: " + codigoOperacion);
+                            Console.WriteLine("ERROR: Operaketaren kodea ez da aurkitzen: " + codigoOperacion);
                             writer.WriteLine("#operationFailed");  // Responder siempre al cliente
                             writer.Flush();
                             break;
@@ -213,7 +236,6 @@ namespace TcpServer
             stream.Close();
             Console.WriteLine("Bezero-" + bezeroZenbakia + " konexioa itxita.");
         }
-
         /**
          * Irekitako konexio objektuak itxi.
          */
@@ -239,12 +261,10 @@ namespace TcpServer
             IPAddress localAddr = IPAddress.Parse("127.0.0.1");
 
             MyTcpMultipleListener zerbitzariAplikazioa = new MyTcpMultipleListener(localAddr, port);
-            Console.WriteLine("Servidor iniciando...");
+            Console.WriteLine("Zerbitzaria hasten...");
 
             zerbitzariAplikazioa.EntzutenHasi();  // Asegurar que empieza a escuchar conexiones
 
-            Console.WriteLine("\nPresiona <ENTER> para finalizar...");
-            Console.Read();
             return 0;
         }
 

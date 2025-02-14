@@ -10,14 +10,42 @@ namespace ChatLibrary
     {
         private User bidaltzaile { get; set; }
         private string testu { get; set; }
-        private DateTime bidaliData { get; set; }
+        private string bidaliData { get; set; }
+        private bool mio {  get; set; }
 
-        /* usar esto para sacar fecha y hora
-         * DateTime soloFecha = now.Date; // Solo la fecha (hora será 00:00:00)
-         * TimeSpan soloHora = now.TimeOfDay; // Solo la hora
-         */
+        public new string ToString()
+        {
+            return (testu+"_"+bidaltzaile.Izena+"_"+bidaltzaile.UserColor.R+"_"+ bidaltzaile.UserColor.G + "_"+ bidaltzaile.UserColor.B+ "_"+bidaliData);
+        }
+        public bool Mio
+        {
+            get { return mio; }
+            set { mio = value; }
+        }
+        public User Bidaltzaile
+        {
+            get { return bidaltzaile; }
+            set { bidaltzaile = value; }
+        }
+        public string Testu
+        {
+            get { return testu; }
+            set { testu = value; }
+        }
+        public string BidaliData
+        {
+            get { return bidaliData; }
+            set { bidaliData = value; }
+        }
 
-        private Msg(User b, string t, DateTime d)
+        public Msg(User b, string t, DateTime d)
+        {
+            this.bidaltzaile = b;
+            this.testu = t;
+            this.bidaliData = d.ToString("HH:dd:ss");
+        }
+
+        public Msg(User b, string t, string d)
         {
             this.bidaltzaile = b;
             this.testu = t;

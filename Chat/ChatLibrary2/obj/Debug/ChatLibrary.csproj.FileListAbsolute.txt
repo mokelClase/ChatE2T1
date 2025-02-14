@@ -4,3 +4,9 @@ C:\Users\mikel\Desktop\clase\psp\Chat\ChatLibrary2\obj\Debug\ChatLibrary.csproj.
 C:\Users\mikel\Desktop\clase\psp\Chat\ChatLibrary2\obj\Debug\ChatLibrary.csproj.CoreCompileInputs.cache
 C:\Users\mikel\Desktop\clase\psp\Chat\ChatLibrary2\obj\Debug\ChatLibrary2.dll
 C:\Users\mikel\Desktop\clase\psp\Chat\ChatLibrary2\obj\Debug\ChatLibrary2.pdb
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\bin\Debug\ChatLibrary2.dll
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\bin\Debug\ChatLibrary2.pdb
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Debug\ChatLibrary.csproj.AssemblyReference.cache
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Debug\ChatLibrary.csproj.CoreCompileInputs.cache
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Debug\ChatLibrary2.dll
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Debug\ChatLibrary2.pdb
