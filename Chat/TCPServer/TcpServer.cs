@@ -141,10 +141,9 @@ namespace TcpServer
                                 writer.WriteLine("#connectionSuccesful_" + newUser.UserColor.Id + "_" + newUser.UserColor.R + "_" + newUser.UserColor.G + "_" + newUser.UserColor.B);
                                 writer.Flush();
 
-                                // 🔴 Aquí enviamos los mensajes previos al nuevo usuario
                                 foreach (var mensaje in msgLista)
                                 {
-                                    Console.WriteLine("Mensaje antiguo: #newMessage_" + mensaje.ToString());
+                                    Console.WriteLine("Mezu zahar: #newMessage_" + mensaje.ToString());
                                     writer.WriteLine("#newMessage_" + mensaje.ToString());
                                     writer.Flush();
                                 }
