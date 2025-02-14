@@ -1,0 +1,6 @@
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\bin\Release\ChatLibrary2.dll
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\bin\Release\ChatLibrary2.pdb
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Release\ChatLibrary.csproj.AssemblyReference.cache
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Release\ChatLibrary.csproj.CoreCompileInputs.cache
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Release\ChatLibrary2.dll
+C:\Users\mikel\Desktop\ChatE2\Chat\ChatLibrary2\obj\Release\ChatLibrary2.pdb
